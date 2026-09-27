@@ -10,6 +10,7 @@ const keys = {
   transactions: 'mgmt_acct_transactions',
   payments: 'mgmt_acct_payments',
   inventory: 'mgmt_acct_inventory',
+  users: 'mgmt_acct_users',
 };
 
 describe('company-scoped repository reads', () => {
@@ -47,6 +48,11 @@ describe('company-scoped repository reads', () => {
       { id: 'inventory-a', business_id: 'company-a' },
       { id: 'inventory-b', business_id: 'company-b' },
     ]));
+    localStorage.setItem(keys.users, JSON.stringify([
+      { id: 'user-a', name: 'A', role: 'owner', company_id: 'company-a' },
+      { id: 'user-b', name: 'B', role: 'owner', company_id: 'company-b' },
+      { id: 'unscoped-user', name: 'Unscoped', role: 'owner' },
+    ]));
   });
 
   test('returns only records belonging to the requested company', () => {
@@ -56,6 +62,7 @@ describe('company-scoped repository reads', () => {
     assert.deepEqual(repository.getTransactions('company-a').map(item => item.id), ['transaction-a']);
     assert.deepEqual(repository.getPaymentPlans('company-a').map(item => item.id), ['payment-a']);
     assert.deepEqual(repository.getInventory('company-a').map(item => item.id), ['inventory-a']);
+    assert.deepEqual(repository.getUsersByCompany('company-a').map(item => item.id), ['user-a']);
   });
 
   test('writes audit entries with the active company context', () => {

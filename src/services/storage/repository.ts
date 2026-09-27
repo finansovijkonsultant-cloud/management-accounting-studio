@@ -1931,7 +1931,7 @@ export class Repository {
     return users.filter(user => {
       if (user.company_id) return user.company_id === target;
       if (user.preferred_business_id) return user.preferred_business_id === target;
-      return true;
+      return false;
     });
   }
 
