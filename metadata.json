@@ -1,0 +1,6 @@
+{
+  "name": "Управленческий учет",
+  "description": "Кроссплатформенная ERP и система управленческого учета для МСБ: P&L, Cash Flow, Баланс, платежный календарь, складской учет, мультиязычность, локальный ИИ (Ollama), банки и QR-связка.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
