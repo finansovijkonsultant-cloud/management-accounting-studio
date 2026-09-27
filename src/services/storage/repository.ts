@@ -2270,7 +2270,7 @@ export class Repository {
   public getPairedNodes(businessId?: string): PairedDesktopNode[] {
     const list = this.getItem<PairedDesktopNode[]>(STORAGE_KEYS.PAIRED_NODES, INITIAL_PAIRED_NODES);
     if (!businessId) return list;
-    return list.filter(n => !n.business_id || n.business_id === businessId);
+    return list.filter(n => n.business_id === businessId);
   }
 
   public savePairedNode(node: PairedDesktopNode): void {
@@ -2311,7 +2311,7 @@ export class Repository {
   public getAccounts(businessId?: string): Account[] {
     const list = this.getItem<Account[]>(STORAGE_KEYS.ACCOUNTS, INITIAL_ACCOUNTS);
     const target = businessId || this.getActiveCompanyId();
-    return list.filter(a => !a.business_id || a.business_id === target);
+    return list.filter(a => a.business_id === target);
   }
 
   public getAllAccounts(): Account[] {
@@ -2334,7 +2334,7 @@ export class Repository {
   public getCategories(businessId?: string): TransactionCategory[] {
     const list = this.getItem<TransactionCategory[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
     if (!businessId) return list;
-    return list.filter(c => !(c as any).business_id || (c as any).business_id === businessId);
+    return list.filter(c => (c as any).business_id === businessId);
   }
 
   public getCounterparties(): Counterparty[] {
@@ -2356,7 +2356,7 @@ export class Repository {
   public getTransactions(businessId?: string): Transaction[] {
     const list = this.getItem<Transaction[]>(STORAGE_KEYS.TRANSACTIONS, INITIAL_TRANSACTIONS);
     const target = businessId || this.getActiveCompanyId();
-    return list.filter(t => !t.business_id || t.business_id === target);
+    return list.filter(t => t.business_id === target);
   }
 
   public getAllTransactions(): Transaction[] {
@@ -2527,7 +2527,7 @@ export class Repository {
   public getPaymentPlans(businessId?: string): PaymentPlanItem[] {
     const list = this.getItem<PaymentPlanItem[]>(STORAGE_KEYS.PAYMENTS, INITIAL_PAYMENTS);
     const target = businessId || this.getActiveCompanyId();
-    return list.filter(p => !p.business_id || p.business_id === target);
+    return list.filter(p => p.business_id === target);
   }
 
   public getAllPaymentPlans(): PaymentPlanItem[] {
@@ -2573,7 +2573,7 @@ export class Repository {
   public getInventory(businessId?: string): InventoryItem[] {
     const list = this.getItem<InventoryItem[]>(STORAGE_KEYS.INVENTORY, INITIAL_INVENTORY);
     const target = businessId || this.getActiveCompanyId();
-    return list.filter(i => !i.business_id || i.business_id === target);
+    return list.filter(i => i.business_id === target);
   }
 
   public saveInventoryItem(item: InventoryItem): void {
@@ -2608,7 +2608,7 @@ export class Repository {
   public getRiskAlerts(businessId?: string): RiskAlert[] {
     const list = this.getItem<RiskAlert[]>(STORAGE_KEYS.RISK_ALERTS, INITIAL_RISKS);
     if (!businessId) return list;
-    return list.filter(r => !r.business_id || r.business_id === businessId);
+    return list.filter(r => r.business_id === businessId);
   }
 
   public confirmRiskAlert(id: string): void {
@@ -2625,7 +2625,7 @@ export class Repository {
   public getDevices(businessId?: string): RegisteredDevice[] {
     const list = this.getItem<RegisteredDevice[]>(STORAGE_KEYS.DEVICES, INITIAL_DEVICES);
     if (!businessId) return list;
-    return list.filter(d => !d.business_id || d.business_id === businessId);
+    return list.filter(d => d.business_id === businessId);
   }
 
   public revokeDevice(deviceId: string): void {
@@ -2642,7 +2642,7 @@ export class Repository {
   public getAuditLogs(businessId?: string): AuditLogEntry[] {
     const list = this.getItem<AuditLogEntry[]>(STORAGE_KEYS.AUDIT_LOGS, INITIAL_AUDIT);
     if (!businessId) return list;
-    return list.filter(a => !a.business_id || a.business_id === businessId);
+    return list.filter(a => a.business_id === businessId);
   }
 
   public logAudit(action: string, entity: string, entityId: string, details: string): void {
