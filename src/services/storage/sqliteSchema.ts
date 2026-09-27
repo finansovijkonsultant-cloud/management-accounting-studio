@@ -313,6 +313,10 @@ CREATE INDEX IF NOT EXISTS idx_approval_votes_req ON approval_votes(approval_req
 CREATE INDEX IF NOT EXISTS idx_approval_votes_participant ON approval_votes(participant_id);
 `;
 
+export const SQLITE_COMPATIBILITY_MIGRATIONS = [
+  'ALTER TABLE users ADD COLUMN company_id TEXT;',
+];
+
 /**
  * Utility: Converts float currency amounts to integer cents to avoid IEEE-754 drift.
  */

@@ -28,7 +28,7 @@ import {
   ApprovalEntityType,
 } from '../../types';
 import { DatabaseFactory, ISqliteDriver } from './sqliteDriver';
-import { SQLITE_SCHEMA_DDL, toCents, fromCents } from './sqliteSchema';
+import { SQLITE_COMPATIBILITY_MIGRATIONS, SQLITE_SCHEMA_DDL, toCents, fromCents } from './sqliteSchema';
 
 const STORAGE_KEYS = {
   SETTINGS: 'mgmt_acct_settings',
@@ -1492,6 +1492,13 @@ export class Repository {
   private async initSqliteSchema(): Promise<void> {
     try {
       await this.dbDriver.execute(SQLITE_SCHEMA_DDL);
+      for (const migration of SQLITE_COMPATIBILITY_MIGRATIONS) {
+        try {
+          await this.dbDriver.execute(migration);
+        } catch {
+          // Existing installations may already contain the migrated column.
+        }
+      }
     } catch (err) {
       console.warn('SQLite schema initialization info:', err);
     }
