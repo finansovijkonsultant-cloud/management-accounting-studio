@@ -80,4 +80,22 @@ describe('company-scoped repository reads', () => {
     assert.equal(logs.length, 1);
     assert.equal(logs[0].business_id, 'company-a');
   });
+
+  test('uses bound parameters for native company cleanup queries', async () => {
+    const repository = Repository.getInstance();
+    const calls: Array<{ query: string; params: unknown[] }> = [];
+    (repository as any).dbDriver = {
+      execute: (query: string, params: unknown[] = []) => {
+        calls.push({ query, params });
+        return Promise.resolve({ rowsAffected: 1 });
+      },
+    };
+
+    const result = repository.wipeBusinessData('company-b', 'owner');
+    assert.equal(result.success, true);
+    assert.equal(calls.length, 6);
+    assert.ok(calls.every(call => call.query.includes('WHERE') && call.query.includes('?')));
+    assert.ok(calls.every(call => call.params.length === 1 && call.params[0] === 'company-b'));
+    assert.ok(calls.every(call => !call.query.includes('company-b')));
+  });
 });
