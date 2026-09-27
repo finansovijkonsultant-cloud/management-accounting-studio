@@ -2337,12 +2337,14 @@ export class Repository {
     return list.filter(c => (c as any).business_id === businessId);
   }
 
-  public getCounterparties(): Counterparty[] {
-    return this.getItem<Counterparty[]>(STORAGE_KEYS.COUNTERPARTIES, INITIAL_COUNTERPARTIES);
+  public getCounterparties(businessId?: string): Counterparty[] {
+    const list = this.getItem<Counterparty[]>(STORAGE_KEYS.COUNTERPARTIES, INITIAL_COUNTERPARTIES);
+    if (!businessId) return list;
+    return list.filter(counterparty => counterparty.business_id === businessId);
   }
 
   public saveCounterparty(cp: Counterparty): void {
-    const list = this.getCounterparties();
+    const list = this.getCounterparties(this.getActiveCompanyId());
     const idx = list.findIndex(c => c.id === cp.id);
     if (idx >= 0) {
       list[idx] = cp;
