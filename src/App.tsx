@@ -35,6 +35,7 @@ import { LoginScreen } from './components/LoginScreen';
 import { DocsView } from './components/DocsView';
 import { ApprovalWorkflowModal } from './components/ApprovalWorkflowModal';
 import { ParsedStatementTransaction } from './services/banking';
+import { getRuntimeFeatureFlags } from './lib/config/featureFlags';
 
 export default function App() {
   const repo = Repository.getInstance();
@@ -67,6 +68,7 @@ export default function App() {
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState<boolean>(false);
 
   const t = getTranslation(locale);
+  const featureFlags = getRuntimeFeatureFlags();
 
   // Load state scoped by activeCompanyId
   const refreshData = useCallback(() => {
@@ -603,6 +605,7 @@ export default function App() {
             currentRole={currentUser.role}
             riskCount={(riskAlerts || []).filter(r => !r.confirmed_at && !r.resolved).length}
             pendingApprovalCount={pendingApprovalCount}
+            featureFlags={featureFlags}
           />
 
           {/* View Content Area: Key ensures complete React redraw of all 11 pages on locale or company change */}

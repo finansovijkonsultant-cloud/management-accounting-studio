@@ -20,6 +20,7 @@ import {
   Users,
 } from 'lucide-react';
 import { TranslationDictionary } from '../i18n';
+import { FeatureFlags } from '../lib/config/featureFlags';
 
 export type TabKey =
   | 'dashboard'
@@ -55,6 +56,7 @@ interface SidebarProps {
   riskCount?: number;
   pendingApprovalCount?: number;
   unresolvedAlertsCount?: number;
+  featureFlags?: FeatureFlags;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -66,6 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   riskCount = 0,
   pendingApprovalCount = 0,
   unresolvedAlertsCount = 0,
+  featureFlags = { cloudAi: false, p2pSync: false },
 }) => {
   const handleSelect = (tab: TabKey) => {
     if (onTabChange) onTabChange(tab);
@@ -81,23 +84,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { key: 'balance', label: t.nav.balance, icon: <Scale className="w-4 h-4" /> },
     { key: 'planFact', label: t.nav.planFact, icon: <Target className="w-4 h-4" /> },
     { key: 'inventory', label: t.nav.inventory, icon: <Boxes className="w-4 h-4" /> },
-    {
-      key: 'aiConsultant',
+    ...(featureFlags.cloudAi ? [{
+      key: 'aiConsultant' as TabKey,
       label: t.nav.aiConsultant,
       icon: <Bot className="w-4 h-4" />,
       badge: unresolvedAlertsCount > 0 ? unresolvedAlertsCount : undefined,
-    },
-    { key: 'importExport', label: t.nav.importExport, icon: <ArrowUpDown className="w-4 h-4" /> },
-    { key: 'devicePairing', label: t.nav.devicePairing, icon: <Smartphone className="w-4 h-4" /> },
-    { key: 'securityAudit', label: t.nav.securityAudit, icon: <ShieldCheck className="w-4 h-4" /> },
+    }] : []),
+    { key: 'importExport' as TabKey, label: t.nav.importExport, icon: <ArrowUpDown className="w-4 h-4" /> },
+    ...(featureFlags.p2pSync ? [{ key: 'devicePairing' as TabKey, label: t.nav.devicePairing, icon: <Smartphone className="w-4 h-4" /> }] : []),
+    { key: 'securityAudit' as TabKey, label: t.nav.securityAudit, icon: <ShieldCheck className="w-4 h-4" /> },
     {
-      key: 'approvals',
+      key: 'approvals' as TabKey,
       label: 'Согласование (ТЗ)',
       icon: <Users className="w-4 h-4" />,
       badge: pendingApprovalCount > 0 ? pendingApprovalCount : undefined,
     },
-    { key: 'settings', label: t.nav.settings || 'Настройки', icon: <Settings className="w-4 h-4" /> },
-    { key: 'docs', label: t.nav.docs, icon: <BookOpen className="w-4 h-4" /> },
+    { key: 'settings' as TabKey, label: t.nav.settings || 'Настройки', icon: <Settings className="w-4 h-4" /> },
+    { key: 'docs' as TabKey, label: t.nav.docs, icon: <BookOpen className="w-4 h-4" /> },
   ];
 
   return (
