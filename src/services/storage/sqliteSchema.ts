@@ -50,10 +50,14 @@ CREATE TABLE IF NOT EXISTS users (
   pin_hash TEXT NOT NULL,
   email TEXT,
   avatar_color TEXT,
+  company_id TEXT,
   preferred_business_id TEXT,
   created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
+  updated_at TEXT NOT NULL,
+  FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS idx_users_company ON users(company_id);
 
 -- 4. Accounts (Балансы хранятся строго в INT копейках / integer cents)
 CREATE TABLE IF NOT EXISTS accounts (
