@@ -112,4 +112,50 @@ describe('approval workflow domain enforcement', () => {
 
     assert.throws(() => repo.deletePaymentPlan('p-1'), /DIRECT_DELETE_BLOCKED|collective/i);
   });
+
+  test('requires all participants and rejects the request when any participant rejects', () => {
+    const repo = Repository.getInstance();
+    const created = repo.createApprovalRequest({
+      entity_type: 'transaction',
+      entity_id: 'tx-1',
+      action_type: 'update_transaction',
+      reason: 'Lifecycle rejection test',
+      company_id: 'comp-main-001',
+    });
+    const requestId = created.request?.id;
+    assert.ok(requestId);
+
+    const firstVote = repo.castApprovalVote(requestId, 'approve');
+    assert.equal(firstVote.status, 'pending_approval');
+
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) ?? '[]');
+    repo.setCurrentUser(users[1]);
+    const rejection = repo.castApprovalVote(requestId, 'reject', 'Needs correction');
+
+    assert.equal(rejection.status, 'rejected');
+    assert.equal(repo.getApprovalRequest(requestId)?.status, 'rejected');
+  });
+
+  test('approves only after every required participant votes approve', () => {
+    const repo = Repository.getInstance();
+    const created = repo.createApprovalRequest({
+      entity_type: 'transaction',
+      entity_id: 'tx-1',
+      action_type: 'update_transaction',
+      reason: 'Lifecycle approval test',
+      company_id: 'comp-main-001',
+    });
+    const requestId = created.request?.id;
+    assert.ok(requestId);
+
+    const ownerVote = repo.castApprovalVote(requestId, 'approve');
+    assert.equal(ownerVote.status, 'pending_approval');
+
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) ?? '[]');
+    repo.setCurrentUser(users[1]);
+    const directorVote = repo.castApprovalVote(requestId, 'approve');
+
+    assert.equal(directorVote.status, 'approved');
+    assert.equal(repo.getApprovalRequest(requestId)?.status, 'approved');
+  });
 });
