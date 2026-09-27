@@ -57,4 +57,14 @@ describe('company-scoped repository reads', () => {
     assert.deepEqual(repository.getPaymentPlans('company-a').map(item => item.id), ['payment-a']);
     assert.deepEqual(repository.getInventory('company-a').map(item => item.id), ['inventory-a']);
   });
+
+  test('writes audit entries with the active company context', () => {
+    const repository = Repository.getInstance();
+
+    repository.logAudit('TEST', 'Company', 'company-a', 'Company-scoped audit entry');
+
+    const logs = repository.getAuditLogs('company-a');
+    assert.equal(logs.length, 1);
+    assert.equal(logs[0].business_id, 'company-a');
+  });
 });

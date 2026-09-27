@@ -2649,6 +2649,7 @@ export class Repository {
     const logs = this.getAuditLogs();
     const entry: AuditLogEntry = {
       id: 'aud-' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
+      business_id: this.getActiveCompanyId(),
       timestamp: new Date().toISOString(),
       user_id: 'usr-current',
       user_name: 'Поточний користувач',
