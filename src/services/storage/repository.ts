@@ -1865,12 +1865,19 @@ export class Repository {
 
     // 9. Execute transactional SQLite deletion on native database layer
     try {
-      this.dbDriver.execute(`DELETE FROM transactions WHERE business_id = '${businessId}';`);
-      this.dbDriver.execute(`DELETE FROM accounts WHERE business_id = '${businessId}';`);
-      this.dbDriver.execute(`DELETE FROM payment_plans WHERE business_id = '${businessId}';`);
-      this.dbDriver.execute(`DELETE FROM inventory WHERE business_id = '${businessId}';`);
-      this.dbDriver.execute(`DELETE FROM chart_of_accounts WHERE business_id = '${businessId}';`);
-      this.dbDriver.execute(`DELETE FROM business_profiles WHERE id = '${businessId}';`);
+      const deleteStatements = [
+        'DELETE FROM transactions WHERE business_id = ?;',
+        'DELETE FROM accounts WHERE business_id = ?;',
+        'DELETE FROM payment_plans WHERE business_id = ?;',
+        'DELETE FROM inventory WHERE business_id = ?;',
+        'DELETE FROM chart_of_accounts WHERE business_id = ?;',
+        'DELETE FROM business_profiles WHERE id = ?;',
+      ];
+      for (const statement of deleteStatements) {
+        void this.dbDriver.execute(statement, [businessId]).catch(sqlErr => {
+          console.warn('Native SQLite Wipe Non-fatal Warning:', sqlErr);
+        });
+      }
     } catch (sqlErr) {
       console.warn('Native SQLite Wipe Non-fatal Warning:', sqlErr);
     }
